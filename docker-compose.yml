@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: ["tail", "-f", "/dev/null"]
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - mysql
+      - kafka
+      - redis
+      - elasticsearch
+    volumes:
+      - .:/app
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: employeedb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: strongpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres-init:/docker-entrypoint-initdb.d
+
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: employeedb
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: strongpassword
+      MYSQL_ROOT_PASSWORD: rootstrongpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql-init:/docker-entrypoint-initdb.d
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  redis:
+    image: redis:latest
+    command: redis-server --requirepass strongpassword
+    ports:
+      - "6379:6379"
+
+  elasticsearch:
+    image: elasticsearch:8.14.1
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - ELASTIC_PASSWORD=strongpassword
+      - xpack.security.enabled=true
+    ports:
+      - "9200:9200"
+
+volumes:
+  postgres-data:
+  mysql-data:
+  elasticsearch-data:
