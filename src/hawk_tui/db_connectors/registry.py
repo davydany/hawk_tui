@@ -1,7 +1,7 @@
-from hawk_tui.db_connectors.base import ConnectionType, Connection
-from hawk_tui.db_connectors.postgresql import PostgresConnection
+from hawk_tui.db_connectors.base import ConnectionType, BaseConnection
+from hawk_tui.db_connectors.postgresql import PostgreSQLConnection
 from hawk_tui.db_connectors.mysql import MySQLConnection
-from hawk_tui.db_connectors.kafka import KafkaConnection
+# from hawk_tui.db_connectors.kafka import KafkaConnection
 from hawk_tui.db_connectors.redis import RedisConnection
 from hawk_tui.db_connectors.elasticsearch import ElasticsearchConnection
 
@@ -11,7 +11,7 @@ class ConnectionRegistry(object):
     def __init__(self):
         self.registry = {}
     
-    def register(self, conn_type:ConnectionType, conn:Connection):
+    def register(self, conn_type:ConnectionType, conn:BaseConnection):
         self.registry[conn_type] = conn
     
     def get(self, conn_type:ConnectionType):
@@ -23,9 +23,9 @@ class ConnectionRegistry(object):
 
 CONNECTION_REGISTRY = ConnectionRegistry()
 
-CONNECTION_REGISTRY.register(ConnectionType.POSTGRES, PostgresConnection)
+CONNECTION_REGISTRY.register(ConnectionType.POSTGRES, PostgreSQLConnection)
 CONNECTION_REGISTRY.register(ConnectionType.MYSQL, MySQLConnection)
-CONNECTION_REGISTRY.register(ConnectionType.KAFKA, KafkaConnection)
+# CONNECTION_REGISTRY.register(ConnectionType.KAFKA, KafkaConnection)
 CONNECTION_REGISTRY.register(ConnectionType.REDIS, RedisConnection)
 CONNECTION_REGISTRY.register(ConnectionType.ELASTICSEARCH, ElasticsearchConnection)
 

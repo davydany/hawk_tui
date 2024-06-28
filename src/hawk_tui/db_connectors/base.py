@@ -1,4 +1,5 @@
 from hawk_tui.base import Base
+from enum import Enum
 
 class ConnectionType(Enum):
 

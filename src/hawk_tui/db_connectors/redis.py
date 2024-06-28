@@ -5,14 +5,22 @@ from hawk_tui.db_connectors.base import BaseConnection
 class RedisConnection(BaseConnection):
 
     def connect(self):
-        return redis.Redis(
-            host=self.host,
-            port=self.port,
-            username=self.username,
-            password=self.password,
-            db=self.database,
-            decode_responses=True
-        )
+        if self.password:
+            return redis.Redis(
+                host=self.host,
+                port=self.port,
+                password=self.password,
+                db=self.database,
+                decode_responses=True
+            )
+        else:
+            return redis.Redis(
+                host=self.host,
+                port=self.port,
+                db=self.database,
+                decode_responses=True
+            )
+
 
     def is_connected(self) -> bool:
         try:
@@ -47,6 +55,9 @@ class RedisConnection(BaseConnection):
 
     def ttl(self, key: str) -> int:
         return self.connection.ttl(key)
+    
+    def type(self, key: str) -> str:
+        return self.connection.type(key)
 
     def persist(self, key: str) -> bool:
         return self.connection.persist(key)

@@ -1,0 +1,38 @@
+.box {
+    border: solid green;
+}
+#main_layout {
+    height: 100%;
+    layout: grid;
+    grid-size: 5 4;
+    grid-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-rows: 5% 5% 70% 20%;
+
+    grid-gutter: 1;
+    background: $panel;
+    border: greenyellow;
+}
+
+#controls_layout {
+    column-span: 10;
+    row-span: 1;
+}
+
+#data-table {
+    column-span: 10;
+    row-span: 8;
+}
+
+#sidebar {
+    dock: right;
+    width: 15%;
+    height: 100%;
+    color: black;
+    text-style: bold;
+    background: $panel;
+}
+
+#sidebar .text-input {
+    background: gray;
+    color: black;
+}
